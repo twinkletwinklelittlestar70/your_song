@@ -1,0 +1,16 @@
+absl-py==0.13.0
+certifi==2021.5.30
+click==8.0.1
+dataclasses==0.8
+Flask==2.0.1
+Flask-Cors==3.0.10
+importlib-metadata==4.8.0
+itsdangerous==2.0.1
+Jinja2==3.0.1
+MarkupSafe==2.0.1
+ortools==9.0.9048
+protobuf==3.17.3
+six==1.16.0
+typing-extensions==3.10.0.0
+Werkzeug==2.0.1
+zipp==3.5.0

@@ -1,0 +1,13 @@
+backend/static/css/*
+backend/static/js/*
+backend/static/img/*
+backend/static/favicon.ico
+backend/static/index.html
+frontend/dist/*
+.DS_Store
+backend/.DS_Store
+backend/__pycache__/*
+frontend/node_modules/*
+**/.DS_Store
+**/__pycache__/*
+algorithms/dataset/
