@@ -54,15 +54,17 @@ def sned_msg():
     
     # 如果需要推荐，调用rec_engine获取推荐列表
     recommend_list = []
-    rec_type = 1 # 1: recommend by genre  # 2: recommend by song
+    rec_type = 2 # 1: recommend by genre  # 2: recommend by song
     return_data = {} # 返回给前端的数据
 
     if rec_type == 1:
+        # TODO: 替换成用户指定的风格和歌手
         genre = 'pop'
         artist_list = ['taylor swift']
+
         recommend_list = rec_engine.get_list_by_genre(genre, artist_list, 10)
     elif rec_type == 2:
-        song_id = 12345678
+        song_id = 23
         recommend_list = rec_engine.get_list_by_song(song_id, 10)
 
     # TODO: return_data 按API文档，构造成回复格式，并在其中拼接上推荐列表。

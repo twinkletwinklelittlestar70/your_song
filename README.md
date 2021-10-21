@@ -18,6 +18,8 @@ Step1. go into the `frontend` folder and follow the install instruction under th
 
 Step2. go into the `backend` folder and follow the install instruction under the folder.
 
+use `pip freeze > requirements.txt` to freeze all required module.
+
 # Deployment
 Step1. go into the `frontend` folder and follow the deployment instruction under the folder.
 
