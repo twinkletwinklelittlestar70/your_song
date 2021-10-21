@@ -1,20 +1,46 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <van-button>VAN BUTTON </van-button>
+    <p v-for="item in chatList" :key="item.message">
+      {{ item.message }}
+    </p>
+    <el-input v-model="input" placeholder="Please input" v-on:change="sendMessage" />
   </div>
 </template>
 
 <script>
-import { Button } from 'vant';
+import { postMsg } from '../api/api.js'
 
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
   },
+  data() {
+    return {
+      input: '',
+      chatList: []
+    };
+  },
   components: {
-    [Button.name]: Button,
+
+  },
+  methods: {
+    sendMessage(msg) {
+      this.chatList.push({
+        message: msg
+      })
+      this.input = ''
+      
+      // 发送给后端
+      postMsg(msg).then((data) => {
+        const response = data.response
+        this.chatList.push({
+          message: 'Bot: ' + response
+        })
+      })
+      
+    }
   }
 }
 </script>
