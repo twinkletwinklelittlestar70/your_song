@@ -50,7 +50,7 @@ export default {
       postMsg(msg).then((data) => {
         const response = data.response
         this.chatList.push({
-          message: 'Bot: ' + response,
+          message: response,
           isBot: true
         })
         this.scrollToBottom()
