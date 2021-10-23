@@ -41,7 +41,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .bot-chat-line, .me-chat-line {
-    padding: 30px;
+    padding: 10px 30px;
     display: flex;
 }
 .bot-chat-line {
@@ -55,9 +55,6 @@ export default {
     height: 40px;
     border: 1px solid #189ce2;
     border-radius: 50%;
-}
-.avator-container {
-
 }
 .message-container {
     text-align: left;
