@@ -41,12 +41,12 @@ def sned_msg():
 
     # TODO: 根据返回数据判断是否需要推荐列表
 
-    need_recommend = False # 是否要推荐列表
+    need_recommend = True # 是否要推荐列表
 
     # 如果不需要推荐，直接返回机器人的回复给用户
     if not need_recommend:
         return_data = { # 返回给前端的数据
-            "response": f"This is my {count_index} response"
+            "response": f"This is normal {count_index} response"
         }
         # TODO: return_data 按API文档，构造成机器人的回复格式
         
@@ -54,17 +54,19 @@ def sned_msg():
     
     # 如果需要推荐，调用rec_engine获取推荐列表
     recommend_list = []
-    rec_type = 2 # 1: recommend by genre  # 2: recommend by song
-    return_data = {} # 返回给前端的数据
+    rec_type = 1 # 1: recommend by genre  # 2: recommend by song
+    return_data = { # 返回给前端的数据
+        "response": f"This is recommend {count_index} response"
+    }
 
     if rec_type == 1:
         # TODO: 替换成用户指定的风格和歌手
-        genre = 'pop'
+        genre = 'Pop'
         artist_list = ['taylor swift']
 
         recommend_list = rec_engine.get_list_by_genre(genre, artist_list, 10)
     elif rec_type == 2:
-        song_id = 23
+        song_id = 18344
         recommend_list = rec_engine.get_list_by_song(song_id, 10)
 
     # TODO: return_data 按API文档，构造成回复格式，并在其中拼接上推荐列表。
