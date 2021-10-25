@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 from .api.RecEngine import rec_engine
+from .utils import gen_uuid
 
 # 通过 static_folder 指定静态资源路径，以便 index.html 能正确访问 CSS 等静态资源
 # template_folder 指定模板路径，以便 render_template 能正确渲染 index.html
@@ -32,12 +33,13 @@ def sned_msg():
 #       但推荐引擎的两个接口都是无状态的，目前计划实现为全局单例。
 
     data = request.json
-    # TODO: 从请求接口中获取用户发送的消息
     message = data['message']
 
     # TODO: 校验请求信息，没有信息或者信息格式不对，返回错误码
 
     # TODO: 把用户的消息发送给 dialogflow 机器人，拿到机器人回复（这里可能涉及需要多个机器人实例）
+
+    
 
     # TODO: 根据返回数据判断是否需要推荐列表
 
