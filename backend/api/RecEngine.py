@@ -90,6 +90,7 @@ class RecEngine():
         if len(song_name) > 0:
             data_list = self._get_data_by_name_list(name_list=[song_name])
             song_id = data_list[0]['id']
+            print('寻找到指定推荐的歌', data_list[0])
 
         nmf_features = self.nmf_features
         song_name_list = self.song_name # name list of songs
@@ -103,7 +104,6 @@ class RecEngine():
         x = df.join(song_name_list)
         df = pd.pivot_table(x, x[[0,1,2,3,4,5]],["Song-Names"]) # for indexing song_name to our df
 
-        
         value = df.loc[name]
         similarities = df.dot(value)
         top_similarities = similarities.nlargest(number)

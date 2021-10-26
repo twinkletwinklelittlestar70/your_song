@@ -89,7 +89,7 @@ def sned_msg():
     
     # 如果需要推荐，调用rec_engine获取推荐列表
     recommend_list = []
-    rec_type = 1 # 1: recommend by genre  # 2: recommend by song
+    rec_type = 2 # 1: recommend by genre  # 2: recommend by song
     return_data = { # 返回给前端的数据
         "response": f"This is recommend {count_index} response"
     }
@@ -102,9 +102,9 @@ def sned_msg():
         recommend_list = rec_engine.get_list_by_genre(genre, artist_list, 10)
     elif rec_type == 2:
         song_id = 29
-        song_name = 'I Like Me Better'
+        song_name = 'The Smile Song' # id=9209
         # 指定歌名或者歌曲id。如果两个都指定，使用歌名
-        recommend_list = rec_engine.get_list_by_song(song_id=song_id, song_name='', number=10)
+        recommend_list = rec_engine.get_list_by_song(song_id=song_id, song_name=song_name, number=10)
 
     # TODO: return_data 按API文档，构造成回复格式，并在其中拼接上推荐列表。
 
@@ -113,3 +113,12 @@ def sned_msg():
 
 if __name__ == '__main__':
     app.run()
+
+
+#     artist: "Pinkie Pie"
+# genre: "rock"
+# id: 9209
+# mode: 1
+# name: "The Smile Song"
+# uri: "spotify:track:78gubWpj4JIxFeMixvdNsi"
+# url: "https://open.spotify.com/track/78gubWpj4JIxFeMixvdNsi"
