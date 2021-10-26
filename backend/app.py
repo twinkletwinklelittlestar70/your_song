@@ -47,6 +47,7 @@ def sned_msg():
     # TODO: 校验请求信息，没有信息或者信息格式不对，返回错误码
 
     # TODO: 把用户的消息发送给 dialogflow 机器人，拿到机器人回复（这里可能涉及需要多个机器人实例）
+
     # SESSION_ID = gen_uuid()
     SESSION_ID = 'me'
     if  SESSION_ID not in Session123:
@@ -68,6 +69,7 @@ def sned_msg():
         response = session_client.detect_intent(session=session, query_input=query_input)
     except InvalidArgument:
         raise
+
 
     # TODO: 根据返回数据判断是否需要推荐列表
 
@@ -94,13 +96,15 @@ def sned_msg():
 
     if rec_type == 1:
         # TODO: 替换成用户指定的风格和歌手
-        genre = 'Pop'
-        artist_list = ['taylor swift']
-
+        genre = 'popular'
+        artist_list = ['Ed Sheeran', 'Katy Perry']
+        
         recommend_list = rec_engine.get_list_by_genre(genre, artist_list, 10)
     elif rec_type == 2:
-        song_id = 18344
-        recommend_list = rec_engine.get_list_by_song(song_id, 10)
+        song_id = 29
+        song_name = 'I Like Me Better'
+        # 指定歌名或者歌曲id。如果两个都指定，使用歌名
+        recommend_list = rec_engine.get_list_by_song(song_id=song_id, song_name='', number=10)
 
     # TODO: return_data 按API文档，构造成回复格式，并在其中拼接上推荐列表。
 
