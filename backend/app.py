@@ -103,11 +103,13 @@ def sned_msg():
             }
         else:  # 如果获取到输入的genre,返回该风格类型的歌曲list
             rec_type=value['genre'].list_value.values[0].string_value
-            recommend_list = rec_engine.get_list_by_genre(rec_type, artist_list=[], number=10)
+            artist_list=value['music-artist'].string_value
+            recommend_list = rec_engine.get_list_by_genre(rec_type, artist_list=[artist_list], number=10)
             return_data = {  # 返回给前端的数据
                  "response": f"These songs which you may like",
                  "recommend_list": recommend_list
             }
+
     # 需要根据歌名推荐，识别"song_name"意图
     elif response.query_result.intent.display_name == "song_name":
         song_name = value['music_name'].list_value.values[0].string_value  # 获取歌名
