@@ -2,10 +2,9 @@
   <div class="chat-list">
     <div class="chat-scroller">
       <div v-for="item in chatList" :key="item.message">
-        <ChatLine :msg="item.message" :isBot="item.isBot"></ChatLine>
+        <ChatLine :msg="item.message" :isBot="item.isBot" :rawHtml="item.rawHtml"></ChatLine>
       </div>
     </div>
-    
     <div class="input-container">
       <el-input v-model="input" placeholder="Please input" v-on:change="sendMessage" />
     </div>
@@ -25,12 +24,10 @@ export default {
     return {
       input: '',
       chatList: [{
-        message: 'Welcome to your song! May I recommend some music for you? Please input your favourite genre.\
-          \n R&B\n Underground Rap\n Dark Trap\n Hip Hop\n trance\n trap\n',
+        message: 'Welcome to your song! May I recommend some music for you? Please input your favourite genre. Here is genre we supports:\
+          \n popular\n rock\n folk\n hiphop\n R&B\n jazz\n electronic\n classical\n absolute music\n',
+        rawHtml: "",
         isBot: true
-      }, {
-        message: 'R&B',
-        isBot: false
       }]
     };
   },
@@ -41,6 +38,7 @@ export default {
     sendMessage(msg) {
       this.chatList.push({
         message: msg,
+        rawHtml: '<br/><p>lallal</p>',
         isBot: false
       })
       this.scrollToBottom()
@@ -49,8 +47,17 @@ export default {
       // 发送给后端
       postMsg(msg).then((data) => {
         const response = data.response
+        const recommendList = data.recommend_list || []
+
+        let rawHtml = ''
+        for (let i=0, len=recommendList.length; i<len; i++) {
+          let songName = recommendList[i]['name']
+          let url = recommendList[i]['url']
+          rawHtml += '<br/><span><a style="color: #39c5d9;" href=' + url + '>' + songName + '</a></span>'
+        }
         this.chatList.push({
           message: response,
+          rawHtml,
           isBot: true
         })
         this.scrollToBottom()

@@ -5,6 +5,7 @@
         </div>
         <div class="message-container">
             <span>{{ msg }}</span>
+            <div v-if="rawHtml" v-html="rawHtml"></div>
         </div>
     </div>
     <div class="me-chat-line" v-else>
@@ -23,7 +24,8 @@ export default {
   name: 'ChatLine',
   props: {
     msg: String,
-    isBot: Boolean
+    isBot: Boolean,
+    rawHtml: String
   },
   data() {
     return {
@@ -58,7 +60,7 @@ export default {
 }
 .message-container {
     text-align: left;
-    display: flex;
+    /* display: flex; */
     align-items: center;
     white-space: pre-line;
 }
