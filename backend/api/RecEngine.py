@@ -69,8 +69,11 @@ class RecEngine():
         # random_id_list = list(map(lambda x: x+2 , random_id_list)) # id 转换成index，变成从2开始
 
         recomment_list = self._get_data_by_name_list(id_list=random_id_list)
-
         print('recommend list:', recomment_list)
+
+        if len(recomment_list) == 0:
+            print('Warning: No recommend data. Please check your paramters')
+
         return recomment_list
 
     
@@ -109,8 +112,12 @@ class RecEngine():
         top_similarities = similarities.nlargest(number)
         print("Top 10 recommendations for given music are:", top_similarities)
         name_list = top_similarities.index.values.tolist() # 取出前n个匹配歌的行索引，即为歌名
+        
         recomment_list = self._get_data_by_name_list(name_list=name_list)
         print('recommend list:', recomment_list)
+
+        if len(recomment_list) == 0:
+            print('Warning: No recommend data. Please check your paramters')
         return recomment_list
     
     def _get_data_by_name_list (self, name_list=[], id_list=[]):
@@ -148,7 +155,11 @@ class RecEngine():
         elif len(name_list) > 0:
             for name in name_list:
                 filtered_row = df[df['song_name'] == name] # 匹配歌曲行
-                index = filtered_row.index.values.tolist()[0] # 访问原始数据的行索引，这里默认歌曲不会重名。直接取过滤后第一首。
+                match_list = filtered_row.index.values.tolist()
+                if len(match_list) == 0:
+                    print('Warning: Cannot find this song in our library', name)
+                    continue
+                index = match_list[0] # 访问原始数据的行索引，这里默认歌曲不会重名。直接取过滤后第一首。
                 uri = filtered_row.at[index, 'uri'] # spotify:track:2vc6nj9pw9gd9q343xfrkx
                 url = 'https://open.spotify.com/' + uri.split(':')[1] + '/' + uri.split(':')[2]# https://open.spotify.com/track/2Vc6NJ9PW9gD9q343XFRKx
                 genre = filtered_row.at[index, 'genre']
