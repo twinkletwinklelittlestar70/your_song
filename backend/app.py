@@ -86,7 +86,8 @@ def sned_msg():
     if response.query_result.intent.display_name == "Default Welcome Intent":
         # response的结构
         return_data = { # 返回给前端的数据
-            "response": response.query_result.fulfillment_text
+            "response": response.query_result.fulfillment_text,
+            "session":session
         }
         # TODO: return_data 按API文档，构造成机器人的回复格式
         
@@ -99,7 +100,8 @@ def sned_msg():
         recommend_list = []
         if not value['genre'].list_value.values:    # 如果没有任何类型genre输入，继续询问用户
             return_data = {  # 返回给前端的数据
-                "response": response.query_result.fulfillment_text
+                "response": response.query_result.fulfillment_text,
+                "session":session
             }
         else:  # 如果获取到输入的genre,返回该风格类型的歌曲list
             rec_type=value['genre'].list_value.values[0].string_value
@@ -107,7 +109,8 @@ def sned_msg():
             recommend_list = rec_engine.get_list_by_genre(rec_type, artist_list=[artist_list], number=10)
             return_data = {  # 返回给前端的数据
                  "response": f"These songs which you may like",
-                 "recommend_list": recommend_list
+                 "recommend_list": recommend_list,
+                 "session":session
             }
 
     # 需要根据歌名推荐，识别"song_name"意图
@@ -116,11 +119,19 @@ def sned_msg():
         recommend_list = rec_engine.get_list_by_song(song_name=song_name, number=10)
         return_data = {  # 返回给前端的数据
             "response": f"These songs which you may like",
-            "recommend_list": recommend_list
+            "recommend_list": recommend_list,
+            "session":session
+        }
+    elif response.query_result.intent.display_name == "Default Fallback Intent":
+        # response的结构
+        return_data = { # 返回给前端的数据
+            "response": response.query_result.fulfillment_text,
+            "session":session
         }
     else:  # 当需要推荐，但是没有识别到任何意图时
         return_data = {
             "response": f"What genre like do you want?"
+
         }
 
     # TODO: return_data 按API文档，构造成回复格式，并在其中拼接上推荐列表。
