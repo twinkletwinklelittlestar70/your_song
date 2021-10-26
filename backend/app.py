@@ -4,7 +4,8 @@ from .utils import gen_uuid
 import os
 import dialogflow
 from google.api_core.exceptions import InvalidArgument
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = 'E://project-code//your_song//iss-project-agent-yvrh-8508c4e851cb.json'
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = 'E://project-code//your_song//iss-project-agent-yvrh-8508c4e851cb.json'
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = 'F://nus_class//iss_project//iss-project-agent-yvrh-8508c4e851cb.json'
 
 DIALOGFLOW_PROJECT_ID = 'iss-project-agent-yvrh'
 DIALOGFLOW_LANGUAGE_CODE = 'en'
