@@ -4,7 +4,7 @@ from .utils import gen_uuid
 import os
 import dialogflow
 from google.api_core.exceptions import InvalidArgument
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = 'F://nus_class//iss_project//robot//code//iss-project-agent-yvrh-8508c4e851cb.json'
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = 'E://project-code//your_song//iss-project-agent-yvrh-8508c4e851cb.json'
 
 DIALOGFLOW_PROJECT_ID = 'iss-project-agent-yvrh'
 DIALOGFLOW_LANGUAGE_CODE = 'en'
@@ -74,12 +74,13 @@ def sned_msg():
     # TODO: 根据返回数据判断是否需要推荐列表
 
     need_recommend = False # 是否要推荐列表
-    
+    # print ("this is response")
+    # print(response)
+
     # 如果不需要推荐，直接返回机器人的回复给用户
-    if not need_recommend:
+    if response.query_result.intent.display_name == "Default Welcome Intent":
+    #if not need_recommend:
         # response的结构
-        print ("this is response")
-        print (response)
         return_data = { # 返回给前端的数据
             "response": response.query_result.fulfillment_text
         }
@@ -88,23 +89,40 @@ def sned_msg():
         return jsonify(return_data)
     
     # 如果需要推荐，调用rec_engine获取推荐列表
-    recommend_list = []
-    rec_type = 2 # 1: recommend by genre  # 2: recommend by song
-    return_data = { # 返回给前端的数据
-        "response": f"This is recommend {count_index} response"
-    }
 
-    if rec_type == 1:
-        # TODO: 替换成用户指定的风格和歌手
-        genre = 'popular'
-        artist_list = ['Ed Sheeran', 'Katy Perry']
-        
-        recommend_list = rec_engine.get_list_by_genre(genre, artist_list, 10)
-    elif rec_type == 2:
-        song_id = 29
-        song_name = 'The Smile Song' # id=9209
-        # 指定歌名或者歌曲id。如果两个都指定，使用歌名
-        recommend_list = rec_engine.get_list_by_song(song_id=song_id, song_name=song_name, number=10)
+    # 需要推荐genre相关
+    elif response.query_result.intent.display_name == "Genre_english":
+        recommend_list = []
+        value=response.query_result.parameters.fields
+        if not value['genre'].list_value.values:
+            return_data = { # 返回给前端的数据
+                "response": response.query_result.fulfillment_text
+            }
+        else :
+            rec_type=value['genre'].list_value.values[0].string_value
+            recommend_list = rec_engine.get_list_by_genre(rec_type, artist_list=[], number=10)
+            return_data = { # 返回给前端的数据
+                 "response": f"These songs which you may like",
+                  "recommend_list": recommend_list
+            }
+
+    elif response.query_result.intent.display_name == "song_name":
+        rec_type=response.query_result.parameters.fields.value.list_value.values.string_value
+        recommend_list = rec_engine.get_list_by_genre(rec_type, 10)# 1: recommend by genre  # 2: recommend by song
+        return_data = { # 返回给前端的数据
+            "response": f"This is recommend {count_index} response",
+            recommend_list: recommend_list
+        }
+
+    # if rec_type == 1:
+    #     # TODO: 替换成用户指定的风格和歌手
+    #     genre = 'Pop'
+    #     artist_list = ['taylor swift']
+    #
+    #     recommend_list = rec_engine.get_list_by_genre(genre, artist_list, 10)
+    # elif rec_type == 2:
+    #     song_id = 18344
+    #     recommend_list = rec_engine.get_list_by_song(song_id, 10)
 
     # TODO: return_data 按API文档，构造成回复格式，并在其中拼接上推荐列表。
 
