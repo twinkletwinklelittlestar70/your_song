@@ -24,8 +24,9 @@ export default {
     return {
       input: '',
       chatList: [{
-        message: 'Welcome to your song! May I recommend some music for you? Please input your favourite genre. Here is genre we supports:\
-          \n popular\n rock\n folk\n hiphop\n R&B\n jazz\n electronic\n classical\n absolute music\n',
+        // message: 'Welcome to your song! May I recommend some music for you? Please input your favourite genre. Here is genre we supports:\
+        //   \n popular\n rock\n folk\n hiphop\n R&B\n jazz\n electronic\n classical\n absolute music\n',
+        message: 'Hi! I am Yoyo, your music assitant. What can I do for you?',
         rawHtml: "",
         isBot: true
       }]
@@ -38,7 +39,7 @@ export default {
     sendMessage(msg) {
       this.chatList.push({
         message: msg,
-        rawHtml: '<br/><p>lallal</p>',
+        rawHtml: '',
         isBot: false
       })
       this.scrollToBottom()
