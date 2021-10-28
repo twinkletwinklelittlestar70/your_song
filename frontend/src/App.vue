@@ -29,6 +29,10 @@ export default {
   width: 100vw;
   height: 100vh;
 }
+::-webkit-scrollbar {
+    width: 0px !important;
+    height: 0px !important;
+}
 img.app-logo {
     height: 100px;
     width: 100px;
