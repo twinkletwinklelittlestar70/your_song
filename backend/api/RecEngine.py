@@ -5,7 +5,7 @@
 import pandas as pd
 import pickle
 import random
-from anytree import AnyNode, Node, RenderTree
+from anytree import Node, RenderTree
 import time
 
 class RecEngine():
@@ -81,11 +81,11 @@ class RecEngine():
     
     def get_list_by_song (self, song_id=None, song_name='', number=10, mode=1):
         '''
-            get_list_by_song   根据歌曲获取推荐列表。
-            @song_id{int} 指定歌曲id
-            @song_name{str} 指定歌名; 如果id和名字两个都指定，使用歌名
-            @number{int} 指定推荐歌曲数
-            @mode{bool} 1使用Informed Search算法，0使用top10相似算法
+            get_list_by_song   Recommend by song。
+            @song_id{int} specify song id
+            @song_name{str} specify song name; if id and name both sepecified, use song name in priosity.
+            @number{int} The recommend list length
+            @mode{bool} 1: Using greedy Search; 0: Top 10 base on similarities;
         '''
 
         if song_id is None and song_name == '':
@@ -96,7 +96,7 @@ class RecEngine():
         if len(song_name) > 0:
             data_list = self._get_data_by_name_list(name_list=[song_name])
             song_id = data_list[0]['id']
-            print('寻找到指定推荐的歌', data_list[0])
+            print('Find the specific song', data_list[0])
 
         nmf_features = self.nmf_features
         song_name_list = self.song_name # name list of songs
@@ -110,13 +110,13 @@ class RecEngine():
         x = df.join(song_name_list)
         df = pd.pivot_table(x, x[[0,1,2,3,4,5]],["Song-Names"]) # for indexing song_name to our df
 
-        if mode == 0: # 表示使用与当前歌曲最相近10首歌的算法
+        if mode == 0: # Top 10 base on similarities
             value = df.loc[name] # name是歌名
             similarities = df.dot(value)
             top_similarities = similarities.nlargest(number)
             print("Top 10 recommendations for given music are:", top_similarities)
             name_list = top_similarities.index.values.tolist() # 取出前n个匹配歌的行索引，即为歌名
-        else:
+        else: # Using informed search
             self.df = df
             self.current_name = name
             # time1 = time.time()
@@ -167,12 +167,12 @@ class RecEngine():
                 })
         elif len(name_list) > 0:
             for name in name_list:
-                filtered_row = df[df['song_name'] == name] # 匹配歌曲行
+                filtered_row = df[df['song_name'] == name] # match song row
                 match_list = filtered_row.index.values.tolist()
                 if len(match_list) == 0:
                     print('Warning: Cannot find this song in our library', name)
                     continue
-                index = match_list[0] # 访问原始数据的行索引，这里默认歌曲不会重名。直接取过滤后第一首。
+                index = match_list[0] # song name should not be duplicated. so get the first one in match list;
                 uri = filtered_row.at[index, 'uri'] # spotify:track:2vc6nj9pw9gd9q343xfrkx
                 url = 'https://open.spotify.com/' + uri.split(':')[1] + '/' + uri.split(':')[2]# https://open.spotify.com/track/2Vc6NJ9PW9gD9q343XFRKx
                 genre = filtered_row.at[index, 'genre']
