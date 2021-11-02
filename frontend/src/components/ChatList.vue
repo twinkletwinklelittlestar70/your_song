@@ -6,7 +6,7 @@
       </div>
     </div>
     <div class="input-container">
-      <el-input v-model="input" placeholder="Please input" v-on:change="sendMessage" />
+      <el-input v-model="input" placeholder="Let's start the music journery~ (>^ω^<)" v-on:change="sendMessage" />
     </div>
   </div>
 </template>
@@ -24,8 +24,6 @@ export default {
     return {
       input: '',
       chatList: [{
-        // message: 'Welcome to your song! May I recommend some music for you? Please input your favourite genre. Here is genre we supports:\
-        //   \n popular\n rock\n folk\n hiphop\n R&B\n jazz\n electronic\n classical\n absolute music\n',
         message: 'Hi! I am Yoyo, your music assitant. What can I do for you?',
         rawHtml: "",
         isBot: true
@@ -49,13 +47,17 @@ export default {
       postMsg(msg).then((data) => {
         const response = data.response
         const recommendList = data.recommend_list || []
-
         let rawHtml = ''
-        for (let i=0, len=recommendList.length; i<len; i++) {
-          let songName = recommendList[i]['name']
-          let url = recommendList[i]['url']
-          rawHtml += '<br/><span><a style="color: #39c5d9;" href=' + url + '>' + songName + '</a></span>'
+        if (recommendList.length > 0) {
+          rawHtml = '<br/><ol>'
+          for (let i=0, len=recommendList.length; i<len; i++) {
+            let songName = recommendList[i]['name']
+            let url = recommendList[i]['url']
+            rawHtml += '<li><a style="color: #39c5d9;text-decoration: none;" href=' + url + '>' + songName + '</a></li>'
+          }
+          rawHtml += '</ol><br/>'
         }
+        
         this.chatList.push({
           message: response,
           rawHtml,
@@ -85,12 +87,12 @@ a {
 }
 .input-container {
   position: fixed;
-  bottom: 80px;
+  bottom: 30px;
   width: calc(100vw - 60px);
   margin-left: 20px;
 }
 .chat-scroller {
   overflow: scroll;
-  max-height: calc(100vh - 400px);
+  max-height: calc(100vh - 460px);
 }
 </style>

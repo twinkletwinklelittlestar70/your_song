@@ -10,7 +10,7 @@
     </div>
     <div class="me-chat-line" v-else>
       <div class="avator-container">
-            <img class="avator-icon" src="../assets/profile.png">
+            <img class="avator-icon" src="../assets/profile.jpeg">
         </div>
         <div class="message-container">
             <span>{{ msg }}</span>
@@ -55,7 +55,6 @@ export default {
 .avator-icon {
     width: 40px;
     height: 40px;
-    border: 1px solid #189ce2;
     border-radius: 50%;
 }
 .message-container {
@@ -63,12 +62,18 @@ export default {
     /* display: flex; */
     align-items: center;
     white-space: pre-line;
+    background: #7ab1d724;
+    border-radius: 15px;
+    padding: 15px 15px;
+    
 }
 .bot-chat-line .message-container {
-    padding-left: 30px;
+    margin-left: 10px;
 }
 .me-chat-line .message-container {
-    padding-right: 30px;
+    margin-right: 10px;
+    background: #7ab1d7;
+    color: white;
 }
 
 </style>
