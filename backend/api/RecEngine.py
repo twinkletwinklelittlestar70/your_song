@@ -5,6 +5,8 @@
 import pandas as pd
 import pickle
 import random
+from anytree import AnyNode, Node, RenderTree
+import time
 
 class RecEngine():
     ''' Recommend music to users from our music list.'''
@@ -77,19 +79,20 @@ class RecEngine():
         return recomment_list
 
     
-    def get_list_by_song (self, song_id=None, song_name='', number=10):
+    def get_list_by_song (self, song_id=None, song_name='', number=10, mode=1):
         '''
             get_list_by_song   根据歌曲获取推荐列表。
             @song_id{int} 指定歌曲id
             @song_name{str} 指定歌名; 如果id和名字两个都指定，使用歌名
             @number{int} 指定推荐歌曲数
+            @mode{bool} 1使用Informed Search算法，0使用top10相似算法
         '''
 
         if song_id is None and song_name == '':
             print('Warning: sond_id or song_name should be specify when calling get_list_by_song')
             return []
         
-        # 优先使用名字
+        # use name in priosity
         if len(song_name) > 0:
             data_list = self._get_data_by_name_list(name_list=[song_name])
             song_id = data_list[0]['id']
@@ -107,11 +110,21 @@ class RecEngine():
         x = df.join(song_name_list)
         df = pd.pivot_table(x, x[[0,1,2,3,4,5]],["Song-Names"]) # for indexing song_name to our df
 
-        value = df.loc[name]
-        similarities = df.dot(value)
-        top_similarities = similarities.nlargest(number)
-        print("Top 10 recommendations for given music are:", top_similarities)
-        name_list = top_similarities.index.values.tolist() # 取出前n个匹配歌的行索引，即为歌名
+        if mode == 0: # 表示使用与当前歌曲最相近10首歌的算法
+            value = df.loc[name] # name是歌名
+            similarities = df.dot(value)
+            top_similarities = similarities.nlargest(number)
+            print("Top 10 recommendations for given music are:", top_similarities)
+            name_list = top_similarities.index.values.tolist() # 取出前n个匹配歌的行索引，即为歌名
+        else:
+            self.df = df
+            self.current_name = name
+            # time1 = time.time()
+            self.build_tree(height=number)
+            # time2 = time.time()
+            name_list = self._search_tree(self.root_node)
+            # time3 = time.time()
+            # print('Time cost building tree', time2 - time1, 'Time cost searching tree', time3 - time2)
         
         recomment_list = self._get_data_by_name_list(name_list=name_list)
         print('recommend list:', recomment_list)
@@ -122,10 +135,10 @@ class RecEngine():
     
     def _get_data_by_name_list (self, name_list=[], id_list=[]):
         '''
-            私有函数。用来构建返回的数据
-            从歌名映射到需要返回的数据结构 歌名+歌手+链接
+            private function. To build the return data structure
+            Map song name to other data like artist,link,mode...
             
-            @id_list{list} 注意是从2开始的index
+            @id_list{list} 
             @name_list{list} 
         '''
         
@@ -134,7 +147,7 @@ class RecEngine():
         return_list = []
 
         if len(id_list) > 0:
-            print('列出查找的id', id_list)
+            print('list id we found', id_list)
             for item in id_list:
                 index = item
                 uri = df.at[index, 'uri']
@@ -178,5 +191,70 @@ class RecEngine():
             print('Warning: No paramters when calling get_data_by_name_list.', name_list, id_list)
 
         return return_list
+
+    def _get_children_song (self, df, name, number=10):
+        # print('Looking for similar songs', name)
+        value = df.loc[name]
+        similarities = df.dot(value)
+        mylist = similarities.nlargest(number + 1)
+        name_list = mylist.index.values.tolist()
+
+        # delete the song itself
+        if name in name_list:
+            name_list.remove(name)
+        
+        # get similarity
+        similarity_list = []
+        for name in name_list:
+            similarity_list.append(mylist[name])
+        
+        # print('result for search', name_list)
+        return name_list, similarity_list
+    
+    def build_tree (self, height=5, node=None):
+        TREE_HEIGHT = height # height of tree, also the number of recommand song
+        SUB_NODE_NUMBER = 3 # Trinomial tree
+
+        if node == None:
+            node = Node(self.current_name) # Root node
+            self.root_node = node
+
+        if node.depth >= TREE_HEIGHT - 1: # 4
+            # print(RenderTree(self.root_node))
+            return
+
+        name_list, similarity_list = self._get_children_song(self.df, node.name, number=TREE_HEIGHT)
+        
+        # filter ancestor name from name_list. 
+        ancestors_list = list(node.ancestors)
+        ancestors_name = list(map(lambda n: n.name, ancestors_list))
+        
+        # De-duplication. Remove name in the ancestors_list. 
+        for name in ancestors_name:
+            if name in name_list:
+                name_list.remove(name)
+
+        # build subnodes
+        for index, song in enumerate(name_list[:SUB_NODE_NUMBER]):
+            subnode = Node(song, sim=similarity_list[index], parent=node)
+            self.build_tree(height=TREE_HEIGHT, node=subnode)
+        
+        return 
+    
+    def _search_tree (self, node):
+
+        if node.is_leaf:
+            return [node.name]
+        
+        # Find the node who has max sim value among children
+        max_node = None
+        max_similarity = 0
+        for child in node.children:
+            if child.sim > max_similarity:
+                max_similarity = child.sim
+                max_node = child
+
+        return [max_node.name] + self._search_tree(max_node)
+    
 
 rec_engine = RecEngine()

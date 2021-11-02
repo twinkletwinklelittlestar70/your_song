@@ -48,8 +48,6 @@ def sned_msg():
 
     # TODO: 校验请求信息，没有信息或者信息格式不对，返回错误码
 
-    # TODO: 把用户的消息发送给 dialogflow 机器人，拿到机器人回复（这里可能涉及需要多个机器人实例）
-
     # SESSION_ID = gen_uuid()
     SESSION_ID = 'me'
     if  SESSION_ID not in Session123:
@@ -73,13 +71,6 @@ def sned_msg():
         raise
 
 
-    # TODO: 根据返回数据判断是否需要推荐列表
-
-    # 是否要推荐列表
-    # print ("this is response")
-    # print(response)# 检查response
-
-
     value = response.query_result.parameters.fields     #拿到response里识别部分
 
     # 如果不需要推荐，直接返回机器人的回复给用户
@@ -95,7 +86,6 @@ def sned_msg():
         return jsonify(return_data)
     
     # 如果需要推荐，调用rec_engine获取推荐列表
-
     # 需要推荐genre相关，识别"Genre_english"意图
     elif response.query_result.intent.display_name == "Genre_english":
         recommend_list = []
@@ -132,13 +122,12 @@ def sned_msg():
     else:  # 当需要推荐，但是没有识别到任何意图时
         return_data = {
             "response": f"What genre like do you want?"
-
         }
-
-    # TODO: return_data 按API文档，构造成回复格式，并在其中拼接上推荐列表。
 
     return jsonify(return_data)
 
+# RecEngin test case
+# rec_engine.get_list_by_song(song_name="Venom", number=10)
 
 if __name__ == '__main__':
     app.run()
