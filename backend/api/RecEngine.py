@@ -79,7 +79,7 @@ class RecEngine():
         return recomment_list
 
     
-    def get_list_by_song (self, song_id=None, song_name='', number=10, mode=1):
+    def get_list_by_song (self, song_id=None, song_name='', number=10, mode=0):
         '''
             get_list_by_song   Recommend by song。
             @song_id{int} specify song id
